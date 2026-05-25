@@ -56,8 +56,10 @@ public:
 
 protected:
 	// 점프
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anim/Jump")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Anim/Jump")
 	int CurrentJumpCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Anim/Jump")
+	bool IsJumpAni;
 	int MaxJumpCount = 2;
 	
 	// 슬라이드
@@ -74,7 +76,7 @@ protected:
 	// 로프
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable")
 	bool IsGetTarget;
-	bool IsShowRope;
+	bool IsShowRope; 
 	FVector RopeEndPos;
 
 public:

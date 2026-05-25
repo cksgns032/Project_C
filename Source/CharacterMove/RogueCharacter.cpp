@@ -46,6 +46,7 @@ void ARogueCharacter::BeginPlay()
 	}
 
 	CurrentJumpCount = 0;
+	IsJumpAni = false;
 	IsSlide = false;
 	CanSlide = true;
 }
@@ -126,29 +127,30 @@ void ARogueCharacter::Look(const FInputActionValue& Value)
 
 void ARogueCharacter::Jump(const FInputActionValue& Value)
 {
-	if (IsSlide)
+	UE_LOG(LogTemp, Log, TEXT("%d"), CurrentJumpCount);
+	if (IsSlide || CurrentJumpCount >= MaxJumpCount )
 	{
 		return;
 	}
-	if (CurrentJumpCount >= MaxJumpCount)
+	
+	if (CurrentJumpCount == 0)
 	{
-		return;
+		Super::Jump();
+		IsJumpAni = true;
+		CurrentJumpCount++;
+ 		
 	}
-	if (GetCharacterMovement()->IsFalling() && CurrentJumpCount == 1)
+	else if(CurrentJumpCount == 1)
 	{
- 		LaunchCharacter(
+		LaunchCharacter(
 			FVector(0, 0, GetCharacterMovement()->JumpZVelocity),
 			false, true
 		);
-		CurrentJumpCount++;
-	}
-	else
-	{
-		Super::Jump();
+		IsJumpAni = true;
 		CurrentJumpCount++;
 	}
 
-	ParkourCom->TraceLege();
+	//ParkourCom->TraceLege();
 
 }
 
@@ -157,7 +159,8 @@ void ARogueCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	// 착지 시 초기화
-	CurrentJumpCount = 0;
+ 	CurrentJumpCount = 0;
+	IsJumpAni = false;
 }
 
 void ARogueCharacter::Slide(const FInputActionValue& Value)
