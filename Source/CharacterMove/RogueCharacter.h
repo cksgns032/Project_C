@@ -74,9 +74,10 @@ protected:
 	FTimerHandle SlideTimer;	
 
 	// ทฮวม
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
 	bool IsGetTarget;
-	bool IsShowRope; 
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
+	bool IsShowRope; */
 	FVector RopeEndPos;
 
 public:
@@ -85,8 +86,8 @@ public:
 	void Jump(const FInputActionValue& Value);
 	void Landed(const FHitResult& Hit);
 	void Slide(const FInputActionValue& Value);
-	void StartRope(const FInputActionValue& Value);
-	void EndRope(const FInputActionValue& Value);
+	/*void StartRope(const FInputActionValue& Value);
+	void EndRope(const FInputActionValue& Value);*/
 
 
 public:
@@ -94,8 +95,8 @@ public:
 	void EndAni();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cable")
-	UCableComponent* CableCom;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cable")
+	UCableComponent* CableCom;*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Search")
 	USearchComponent* SearchCom;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Parkour")
