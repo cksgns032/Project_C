@@ -16,6 +16,7 @@ EBTNodeResult::Type UBTT_ResetAttackCoolTime::ExecuteTask(UBehaviorTreeComponent
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(GetSelectedBlackboardKey(),3);
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bCanAttack", false);
 
 	return EBTNodeResult::Succeeded;
 }

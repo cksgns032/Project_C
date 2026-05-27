@@ -8,7 +8,7 @@
 
 UBTS_CheckDistance::UBTS_CheckDistance()
 {
-	NodeName = TEXT("Target Distance Check");
+	NodeName = TEXT("Update Attack CoolTime");
 }
 
 void UBTS_CheckDistance::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -18,8 +18,15 @@ void UBTS_CheckDistance::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	{
 		return;
 	}
+	AActor* OwnerPawn = OwnerComp.GetAIOwner()->GetPawn();
+	float Dis = FVector::Distance(OwnerPawn->GetActorLocation(), PlayerPawn->GetActorLocation());
 	float CurrentCoolTime = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(GetSelectedBlackboardKey());
-	float worldTime = GetWorld()->DeltaTimeSeconds;
-	CurrentCoolTime -= worldTime;
+	CurrentCoolTime -= DeltaSeconds;
+	if (CurrentCoolTime <= 0)
+	{
+		CurrentCoolTime = 0;
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bCanAttack", true);
+	}
+	UE_LOG(LogTemp, Log, TEXT("%f"), CurrentCoolTime);
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(GetSelectedBlackboardKey(), CurrentCoolTime);
 }
