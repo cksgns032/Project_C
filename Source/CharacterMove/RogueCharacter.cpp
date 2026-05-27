@@ -7,6 +7,7 @@
 #include "./SearchComponent.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Engine/DamageEvents.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "CableComponent.h"
 
@@ -23,9 +24,6 @@ ARogueCharacter::ARogueCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
-	/*CableCom = CreateDefaultSubobject<UCableComponent>(TEXT("CableCom"));
-	CableCom->SetupAttachment(RootComponent);*/
 
 	SearchCom = CreateDefaultSubobject<USearchComponent>(TEXT("SearchCom"));
 
@@ -55,24 +53,6 @@ void ARogueCharacter::BeginPlay()
 void ARogueCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//if (IsShowRope)
-	//{
-	//	
-	//	FVector TargetLocation = UKismetMathLibrary::InverseTransformLocation(CableCom->GetComponentTransform(), RopeEndPos);//GetActorTransform()
-	//	FVector GoleLocation = UKismetMathLibrary::VInterpTo_Constant(CableCom->EndLocation,
-	//																  TargetLocation,
-	//																  1,300);
-	//	CableCom->EndLocation = GoleLocation;
-
-	//	if (IsGetTarget)
-	//	{
-	//		FVector ForceValue = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), RopeEndPos);
-	//		ForceValue = ForceValue.GetSafeNormal() * 250000.f;
-	//		GetCharacterMovement()->AddForce(ForceValue);
-	//	}
-	//}
-
 }
 
 // Called to bind functionality to input
@@ -85,8 +65,6 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARogueCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ARogueCharacter::Jump);
 		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Triggered, this, &ARogueCharacter::Slide);
-		/*EnhancedInputComponent->BindAction(RopeAction, ETriggerEvent::Started, this, &ARogueCharacter::StartRope);
-		EnhancedInputComponent->BindAction(RopeAction, ETriggerEvent::Completed, this, &ARogueCharacter::EndRope);*/
 	}
 }
 
@@ -207,48 +185,19 @@ void ARogueCharacter::Slide(const FInputActionValue& Value)
 	GetWorld()->GetTimerManager().SetTimer(SlideTimer, [this]() { CanSlide = true; UE_LOG(LogTemp, Log, TEXT("Clear")); }, SlideCoolTime, false);
 }
 
-//void ARogueCharacter::StartRope(const FInputActionValue& Value)
-//{
-//	IsShowRope = true;
-//
-//	FVector ViewLocation;
-//	FRotator ViewRotator;
-//	GetController()->GetPlayerViewPoint(ViewLocation, ViewRotator);
-//
-//	FVector StartLocation = GetActorLocation();
-//	FVector RotatorForward = UKismetMathLibrary::GetForwardVector(ViewRotator);
-//	FVector EndLocation = (RotatorForward *3000) + ViewLocation;
-//
-//	FHitResult HitResult;
-//	IsGetTarget = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility);
-//
-//	if (IsGetTarget)
-//	{
-//		RopeEndPos = HitResult.ImpactPoint;
-//		GetCapsuleComponent()->SetCapsuleSize(
-//			88, 88);
-//		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-//	}
-//	else
-//	{
-//		RopeEndPos = EndLocation;
-//	}
-//	CableCom->SetVisibility(true);
-//}
-//
-//void ARogueCharacter::EndRope(const FInputActionValue& Value)
-//{
-//	RopeEndPos = FVector::ZeroVector;
-//
-//	GetCapsuleComponent()->SetCapsuleSize(
-//		34, 88);
-//
-//	CableCom->SetVisibility(false);
-//	CableCom->EndLocation.Set(0,0,0);
-//	IsGetTarget = false;
-//	IsShowRope = false;
-//	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
-//}
+float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	{
+		// 피격 몽타주 재생
+		/*if (HitMontage)
+			PlayAnimMontage(HitMontage);*/
+	}
+
+	return DamageAmount;
+}
 
 void ARogueCharacter::EndAni()
 {

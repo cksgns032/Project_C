@@ -86,8 +86,7 @@ public:
 	void Jump(const FInputActionValue& Value);
 	void Landed(const FHitResult& Hit);
 	void Slide(const FInputActionValue& Value);
-	/*void StartRope(const FInputActionValue& Value);
-	void EndRope(const FInputActionValue& Value);*/
+	virtual float TakeDamage(float DamageAmount,FDamageEvent const& DamageEvent,AController* EventInstigator,AActor* DamageCauser) override;
 
 
 public:

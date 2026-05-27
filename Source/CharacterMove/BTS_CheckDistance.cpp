@@ -27,6 +27,5 @@ void UBTS_CheckDistance::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		CurrentCoolTime = 0;
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bCanAttack", true);
 	}
-	UE_LOG(LogTemp, Log, TEXT("%f"), CurrentCoolTime);
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(GetSelectedBlackboardKey(), CurrentCoolTime);
 }

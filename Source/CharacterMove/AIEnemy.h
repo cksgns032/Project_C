@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	AAIEnemy();
 
+public:
+	int Damage;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,6 +29,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void Attack();
+	UFUNCTION(BlueprintCallable)
+	void Attack(FVector StartLocation, FVector EndLocation,FVector HalfSize);
 
 };

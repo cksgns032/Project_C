@@ -13,7 +13,7 @@ AHook::AHook()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CapsuleCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CapsuleCollider"));
-	CapsuleCollider->SetupAttachment(RootComponent);
+	RootComponent = CapsuleCollider;
 
 	MeshCom = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshCom"));
 	MeshCom->SetupAttachment(CapsuleCollider);
