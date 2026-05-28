@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "Hook.h"
 #include "./ParkourComponent.h"
 #include "./SearchComponent.h"
 
@@ -44,6 +45,7 @@ void ARogueCharacter::BeginPlay()
 	}
 
 	CurrentJumpCount = 0;
+	CanRope = true;
 	IsJumpAni = false;
 	IsSlide = false;
 	CanSlide = true;
@@ -105,7 +107,6 @@ void ARogueCharacter::Look(const FInputActionValue& Value)
 
 void ARogueCharacter::Jump(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("%d"), CurrentJumpCount);
 	if (IsSlide || CurrentJumpCount >= MaxJumpCount )
 	{
 		return;
@@ -136,14 +137,18 @@ void ARogueCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
+	UE_LOG(LogTemp, Log, TEXT("LAND"));
+
 	// 착지 시 초기화
  	CurrentJumpCount = 0;
 	IsJumpAni = false;
+
+	IsAirbon = false;
 }
 
 void ARogueCharacter::Slide(const FInputActionValue& Value)
 {
-	if (IsSlide || CanSlide == false)
+	if (IsAirbon || IsSlide || CanSlide == false)
 	{
 		return;
 	}
@@ -185,15 +190,33 @@ void ARogueCharacter::Slide(const FInputActionValue& Value)
 	GetWorld()->GetTimerManager().SetTimer(SlideTimer, [this]() { CanSlide = true; UE_LOG(LogTemp, Log, TEXT("Clear")); }, SlideCoolTime, false);
 }
 
+void ARogueCharacter::EndHook()
+{
+	IsGetTarget = false;
+	if (Hook != nullptr)
+	{
+		Hook->Destroy();
+		Hook = nullptr;
+	}
+	GetWorld()->GetTimerManager().ClearTimer(RopeTimer);
+	GetWorld()->GetTimerManager().SetTimer(RopeTimer, [this]() { CanRope = true; UE_LOG(LogTemp, Log, TEXT("Clear")); }, RopeCoolTime, false);
+}
+
 float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
+	if (IsGetTarget)
+	{
+		IsGetTarget = false;
+		
+	}
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
 		// 피격 몽타주 재생
-		/*if (HitMontage)
-			PlayAnimMontage(HitMontage);*/
+		if (HitMontage)
+			PlayAnimMontage(HitMontage);
+		IsAirbon = true;
+		EndHook();
 	}
 
 	return DamageAmount;

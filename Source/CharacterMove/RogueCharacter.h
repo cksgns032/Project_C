@@ -67,6 +67,8 @@ protected:
 	bool CanSlide; // 슬라이드를 할 수 있는지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anim/Slide")
 	bool IsSlide; // 슬라이드를 하고 있는지 
+	int CurrentSlideCnt;
+	int MaxSlideCnt = 1;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anim/Slide")
 	float SlideCoolTime = 3;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim/Slide")
@@ -76,9 +78,20 @@ protected:
 	// 로프
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
 	bool IsGetTarget;
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
-	bool IsShowRope; */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cable")
+	TObjectPtr<class AHook> Hook;
 	FVector RopeEndPos;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable")
+	bool CanRope;
+	float RopeCoolTime = 5;
+	FTimerHandle RopeTimer;
+
+	// 타격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim/Hit")
+	UAnimMontage* HitMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Anim/Hit")
+	bool IsAirbon;
+
 
 public:
 	void Move(const FInputActionValue& Value);
@@ -86,6 +99,8 @@ public:
 	void Jump(const FInputActionValue& Value);
 	void Landed(const FHitResult& Hit);
 	void Slide(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable)
+	void EndHook();
 	virtual float TakeDamage(float DamageAmount,FDamageEvent const& DamageEvent,AController* EventInstigator,AActor* DamageCauser) override;
 
 

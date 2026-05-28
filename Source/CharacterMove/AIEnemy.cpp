@@ -36,21 +36,23 @@ void AAIEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSize) {
 	FHitResult HitResult;
-	
+
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(this);
 
-	bool hit = UKismetSystemLibrary::BoxTraceSingle(GetWorld(), 
-													StartLocation, 
-													EndLocation, 
-													HalfSize,	
-													GetActorRotation(), 
-													UEngineTypes::ConvertToTraceType(ECC_Visibility), 
-													false, 
-													ActorsToIgnore, 
-													EDrawDebugTrace::ForDuration, 
-													HitResult, 
-													true, FLinearColor::Red, FLinearColor::Green, 10);
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	bool hit = GetWorld()->SweepSingleByChannel(HitResult, StartLocation, EndLocation, GetActorQuat(), ECC_Visibility, FCollisionShape::MakeBox(HalfSize), params);
+
+	DrawDebugBox(
+		GetWorld(),
+		EndLocation,
+		HalfSize,
+		GetActorQuat(),
+		FColor::Red,
+		false, 5.f
+	);
 
 	if (hit&& HitResult.GetActor())
 	{
@@ -75,14 +77,14 @@ void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSi
 
 			// 뒤로 강하게 밀기
 
-			GEngine->AddOnScreenDebugMessage(
+			/*GEngine->AddOnScreenDebugMessage(
 				-1, 2.0f, FColor::Red,
 				FString::Printf(
 					TEXT("[Knockback] X=%.2f Y=%.2f Z=%.2f"),
 					KnockbackDir.X,
 					KnockbackDir.Y,
 					KnockbackDir.Z)
-			);
+			);*/
 
 			HitCharacter->LaunchCharacter(
 				KnockbackDir * 2000.0f      // 강한 수평 힘
