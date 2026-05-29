@@ -4,9 +4,11 @@
 #include "EnhancedInputSubsystems.h"
 
 #include "Hook.h"
+#include "GameHUD.h"
 #include "./ParkourComponent.h"
 #include "./SearchComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -44,6 +46,12 @@ void ARogueCharacter::BeginPlay()
 		}
 	}
 
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	Hud = Cast<AGameHUD>(PC->GetHUD());
+
+	UpdateCheckPoint(GetActorLocation());
+
 	CurrentJumpCount = 0;
 	CanRope = true;
 	IsJumpAni = false;
@@ -55,6 +63,36 @@ void ARogueCharacter::BeginPlay()
 void ARogueCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!CanSlide && CurSlideCoolTime > 0.0f)
+	{
+		CurSlideCoolTime -= DeltaTime;
+		CurSlideCoolTime = FMath::Max(
+			CurSlideCoolTime, 0.0f);
+
+		Hud->HUDWidget->UpdateSlideProgress(CurSlideCoolTime / SlideCoolTime);
+
+		if (CurSlideCoolTime <= 0.0f)
+		{
+			CanSlide = true;
+			CurSlideCoolTime = 0.0f;
+		}
+	}
+
+	if (CurRopeCoolTime > 0)
+	{
+		CurRopeCoolTime -= DeltaTime;
+		CurRopeCoolTime = FMath::Max(
+			CurRopeCoolTime, 0.0f);
+
+		Hud->HUDWidget->UpdateHookProgress(CurRopeCoolTime / RopeCoolTime);
+
+		if (CurRopeCoolTime <= 0.0f)
+		{
+			CanRope = true;
+			CurRopeCoolTime = 0.0f;
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -68,6 +106,29 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ARogueCharacter::Jump);
 		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Triggered, this, &ARogueCharacter::Slide);
 	}
+}
+
+void ARogueCharacter::PlayHitStop()
+{
+	UGameplayStatics::SetGlobalTimeDilation(
+		GetWorld(), HitStopTimeScale);
+
+	// HitStopDuration 후 복구
+	GetWorld()->GetTimerManager().SetTimer(
+		HitStopTimer,
+		[this]()
+		{
+			UGameplayStatics::SetGlobalTimeDilation(
+				GetWorld(), 1.0f);
+		},
+		HitStopDuration,
+		false
+	);
+}
+
+void ARogueCharacter::UpdateCheckPoint(FVector PointLocation)
+{
+	SpawnLocation = PointLocation;
 }
 
 void ARogueCharacter::Move(const FInputActionValue& Value)
@@ -137,8 +198,6 @@ void ARogueCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
-	UE_LOG(LogTemp, Log, TEXT("LAND"));
-
 	// 착지 시 초기화
  	CurrentJumpCount = 0;
 	IsJumpAni = false;
@@ -186,8 +245,7 @@ void ARogueCharacter::Slide(const FInputActionValue& Value)
 		PlayAnimMontage(SlideMontage);
 	}
 
-	GetWorld()->GetTimerManager().ClearTimer(SlideTimer);
-	GetWorld()->GetTimerManager().SetTimer(SlideTimer, [this]() { CanSlide = true; UE_LOG(LogTemp, Log, TEXT("Clear")); }, SlideCoolTime, false);
+	CurSlideCoolTime = SlideCoolTime;
 }
 
 void ARogueCharacter::EndHook()
@@ -197,9 +255,9 @@ void ARogueCharacter::EndHook()
 	{
 		Hook->Destroy();
 		Hook = nullptr;
+
+		CurRopeCoolTime = RopeCoolTime;
 	}
-	GetWorld()->GetTimerManager().ClearTimer(RopeTimer);
-	GetWorld()->GetTimerManager().SetTimer(RopeTimer, [this]() { CanRope = true; UE_LOG(LogTemp, Log, TEXT("Clear")); }, RopeCoolTime, false);
 }
 
 float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -217,6 +275,7 @@ float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 			PlayAnimMontage(HitMontage);
 		IsAirbon = true;
 		EndHook();
+		PlayHitStop();
 	}
 
 	return DamageAmount;

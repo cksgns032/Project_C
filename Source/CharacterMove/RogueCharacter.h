@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-
 #include "RogueCharacter.generated.h"
 
 class UInputMappingContext;
@@ -14,6 +13,7 @@ class UCapsuleComponent;
 class USphereComponent;
 class USearchComponent;
 class UCableComponent;
+class AGameHUD;
 
 struct FInputActionValue;
 
@@ -46,6 +46,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	AGameHUD* Hud;
 
 public:	
 	// Called every frame
@@ -71,9 +74,10 @@ protected:
 	int MaxSlideCnt = 1;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anim/Slide")
 	float SlideCoolTime = 3;
+	float CurSlideCoolTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim/Slide")
 	UAnimMontage* SlideMontage;
-	FTimerHandle SlideTimer;	
+	//FTimerHandle SlideTimer;	
 
 	// 로프
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
@@ -81,12 +85,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cable")
 	TObjectPtr<class AHook> Hook;
 	FVector RopeEndPos;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cable")
 	bool CanRope;
-	float RopeCoolTime = 5;
-	FTimerHandle RopeTimer;
+	float CurRopeCoolTime;
+	float RopeCoolTime = 1;
+	//FTimerHandle RopeTimer;
 
 	// 타격
+	FTimerHandle HitStopTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitStop")
+	float HitStopDuration = 0.1f;  // 느려지는 시간
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitStop")
+	float HitStopTimeScale = 0.05f; // 느려지는 정도 (0에 가까울수록 느림)
+	void PlayHitStop();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim/Hit")
 	UAnimMontage* HitMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Anim/Hit")
@@ -101,16 +113,16 @@ public:
 	void Slide(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable)
 	void EndHook();
-	virtual float TakeDamage(float DamageAmount,FDamageEvent const& DamageEvent,AController* EventInstigator,AActor* DamageCauser) override;
-
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void EndAni();
 
 public:
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cable")
-	UCableComponent* CableCom;*/
+	void UpdateCheckPoint(FVector PointLocation);
+	FVector SpawnLocation;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Search")
 	USearchComponent* SearchCom;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Parkour")

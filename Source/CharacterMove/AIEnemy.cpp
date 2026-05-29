@@ -56,7 +56,6 @@ void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSi
 
 	if (hit&& HitResult.GetActor())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Attack"));
 		AActor* HitActor = HitResult.GetActor();
 
 		FPointDamageEvent PointDamageEvent;
@@ -76,16 +75,6 @@ void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSi
 			KnockbackDir = KnockbackDir.GetSafeNormal();
 
 			// 뒤로 강하게 밀기
-
-			/*GEngine->AddOnScreenDebugMessage(
-				-1, 2.0f, FColor::Red,
-				FString::Printf(
-					TEXT("[Knockback] X=%.2f Y=%.2f Z=%.2f"),
-					KnockbackDir.X,
-					KnockbackDir.Y,
-					KnockbackDir.Z)
-			);*/
-
 			HitCharacter->LaunchCharacter(
 				KnockbackDir * 2000.0f      // 강한 수평 힘
 				+ FVector(0, 0, 800.0f),    // 약간 위로
