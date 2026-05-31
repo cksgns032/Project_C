@@ -6,6 +6,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "RogueCharacter.h"
+#include "GameHUD.h"
 
 #include "CheckPoint.h"
 
@@ -47,5 +48,13 @@ void ACheckPoint::OnBegine_Implementation()
 
 	MainChar->UpdateCheckPoint(GetActorLocation());
 	BoxCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	APlayerController* PC = Cast<APlayerController>(MainChar->GetController());
+	if (PC == nullptr) return;
+
+	AGameHUD* Hud = Cast<AGameHUD>(PC->GetHUD());
+
+	//Hud->HUDWidget
+
 }
 
