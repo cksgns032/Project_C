@@ -8,6 +8,7 @@
 
 
 class USphereComponent;
+class ISearchableInterface;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CHARACTERMOVE_API USearchComponent : public UActorComponent
@@ -15,7 +16,8 @@ class CHARACTERMOVE_API USearchComponent : public UActorComponent
 	GENERATED_BODY()
 
 protected:
-	TArray<AActor*> Actors;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TScriptInterface<ISearchableInterface> ItemInterface;
 
 public:	
 	// Sets default values for this component's properties
@@ -35,6 +37,8 @@ public:
 	TObjectPtr<USphereComponent> SearchCollider;
 	UFUNCTION()
 	void BeginEvent(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void EndEvent(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 		
 };

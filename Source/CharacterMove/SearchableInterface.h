@@ -24,4 +24,6 @@ class CHARACTERMOVE_API ISearchableInterface
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Overlap")
 	void OnBegine();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Overlap")
+	void OnEnd();
 };

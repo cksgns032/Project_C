@@ -262,11 +262,16 @@ void ARogueCharacter::EndHook()
 
 float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Log, TEXT("Hit"));
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (IsSlide)
+	{
+		EndAni();
+	}
+
 	if (IsGetTarget)
 	{
 		IsGetTarget = false;
-		
 	}
 	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
