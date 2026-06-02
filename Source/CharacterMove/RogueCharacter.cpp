@@ -248,6 +248,15 @@ void ARogueCharacter::Slide(const FInputActionValue& Value)
 	CurSlideCoolTime = SlideCoolTime;
 }
 
+void ARogueCharacter::Interaction(const FInputActionValue& Value)
+{
+	if (SearchCom->ItemInterface == nullptr)
+	{
+		return;
+	}
+	//SearchCom->ItemInterface
+}
+
 void ARogueCharacter::EndHook()
 {
 	IsGetTarget = false;

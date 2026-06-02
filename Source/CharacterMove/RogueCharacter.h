@@ -38,6 +38,8 @@ public:
 	UInputAction* SlideAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* RopeAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* InteractionAction;
 
 public:
 	// Sets default values for this character's properties
@@ -111,6 +113,7 @@ public:
 	void Jump(const FInputActionValue& Value);
 	void Landed(const FHitResult& Hit);
 	void Slide(const FInputActionValue& Value);
+	void Interaction(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable)
 	void EndHook();
 

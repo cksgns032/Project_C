@@ -9,16 +9,22 @@
 class UStaticMeshComponent;
 class UWidgetComponent;
 
+enum EInteractionType {
+	Press,
+	Trigger,
+};
+
 UCLASS()
 class CHARACTERMOVE_API AItemBox : public AActor , public ISearchableInterface
 {
 	GENERATED_BODY()
 
 protected:
+	EInteractionType Type = EInteractionType::Trigger;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget");
-	TObjectPtr <UWidgetComponent> InterectionWidget;
+	TObjectPtr <UWidgetComponent> InteractionWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ChargePercent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -36,6 +42,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnBegine_Implementation() override;
+	virtual void OnTrigger_Implementation() override;
 	virtual void OnEnd_Implementation() override;
 
 public:

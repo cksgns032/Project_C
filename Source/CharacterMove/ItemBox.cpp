@@ -4,6 +4,7 @@
 #include "ItemBox.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -15,8 +16,8 @@ AItemBox::AItemBox()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
 
-	InterectionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interection Widget"));
-	InterectionWidget->SetupAttachment(ItemMesh);
+	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interection Widget"));
+	InteractionWidget->SetupAttachment(ItemMesh);
 
 }
 
@@ -24,7 +25,7 @@ AItemBox::AItemBox()
 void AItemBox::BeginPlay()
 {
 	Super::BeginPlay();
-	InterectionWidget->SetHiddenInGame(true, true);
+	InteractionWidget->SetHiddenInGame(true, true);
 	ChargePercent = 0.f;
 }
 
@@ -38,11 +39,17 @@ void AItemBox::Tick(float DeltaTime)
 void AItemBox::OnBegine_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("BOX"));
-	InterectionWidget->SetHiddenInGame(false, false);
+	InteractionWidget->SetHiddenInGame(false, false);
+}
+
+void AItemBox::OnTrigger_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("BOX Trigger"));
+	ChargePercent += UGameplayStatics::GetWorldDeltaSeconds(GetWorld())*3;
 }
 
 void AItemBox::OnEnd_Implementation() {
-	InterectionWidget->SetHiddenInGame(true, true);
+	InteractionWidget->SetHiddenInGame(true, true);
 }
 
 void AItemBox::FullCharge()

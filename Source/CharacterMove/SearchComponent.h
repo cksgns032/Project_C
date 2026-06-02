@@ -15,7 +15,7 @@ class CHARACTERMOVE_API USearchComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TScriptInterface<ISearchableInterface> ItemInterface;
 
