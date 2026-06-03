@@ -4,6 +4,7 @@
 #include "Engine/DamageEvents.h"
 #include "RogueCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "AIEnemy.h"
 
 // Sets default values
@@ -84,5 +85,63 @@ void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSi
 	}
 	
 
+}
+
+void AAIEnemy::ThrowAttack(int ProjectileCnt, float Angle)
+{
+	FVector  StartLocation = GetActorLocation()
+		+ GetActorForwardVector() * 100.0f;
+
+	FRotator BaseRotation;
+
+	APawn* TargetActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	if (TargetActor)
+	{
+		// 타겟 방향 (높이 차이 포함)
+		FVector Direction = (TargetActor->GetActorLocation()
+			- StartLocation).GetSafeNormal();
+
+		// Pitch 포함된 회전
+		BaseRotation = Direction.Rotation();
+	}
+	else
+	{
+		BaseRotation = GetActorRotation();
+	}
+
+	// Count 가 1이면 직선 / 2개 이상이면 부채꼴
+	float AngleStep = (ProjectileCnt > 1)
+		? Angle / (ProjectileCnt - 1)
+		: 0.0f;
+
+	float StartAngle = (ProjectileCnt > 1)
+		? -Angle / 2.0f
+		: 0.0f;  // 1개면 정면
+
+	for (int32 i = 0; i < ProjectileCnt; i++)
+	{
+		float CurrentAngle = StartAngle + (AngleStep * i);
+
+		FRotator SpawnRotation = BaseRotation;
+		SpawnRotation.Yaw += CurrentAngle;
+
+		FVector Direction = SpawnRotation.Vector();
+		FVector SpawnLocation = StartLocation
+			+ Direction * 50.0f;
+
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+		Params.Instigator = GetInstigator();
+		Params.SpawnCollisionHandlingOverride =
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		GetWorld()->SpawnActor<AActor>(
+			ProjectileClass,
+			SpawnLocation,
+			SpawnRotation,
+			Params
+		);
+	}
 }
 

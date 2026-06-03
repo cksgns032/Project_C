@@ -108,6 +108,15 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	}
 }
 
+void ARogueCharacter::PlayStun()
+{
+	IsSturn = true;
+	if (StunMontage)
+	{
+		PlayAnimMontage(StunMontage);
+	}
+}
+
 void ARogueCharacter::PlayHitStop()
 {
 	UGameplayStatics::SetGlobalTimeDilation(

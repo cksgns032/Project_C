@@ -60,6 +60,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+	// 스턴
+	bool IsSturn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim/Stun")
+	UAnimMontage* StunMontage;
+	UFUNCTION(BlueprintCallable)
+	void PlayStun();
 	// 점프
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Anim/Jump")
 	int CurrentJumpCount;
