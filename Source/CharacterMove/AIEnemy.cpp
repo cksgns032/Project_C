@@ -46,14 +46,14 @@ void AAIEnemy::Attack(FVector StartLocation, FVector EndLocation, FVector HalfSi
 
 	bool hit = GetWorld()->SweepSingleByChannel(HitResult, StartLocation, EndLocation, GetActorQuat(), ECC_Visibility, FCollisionShape::MakeBox(HalfSize), params);
 
-	DrawDebugBox(
+	/*DrawDebugBox(
 		GetWorld(),
-		EndLocation,
+		StartLocation - EndLocation,
 		HalfSize,
 		GetActorQuat(),
 		FColor::Red,
 		false, 5.f
-	);
+	);*/
 
 	if (hit&& HitResult.GetActor())
 	{

@@ -111,6 +111,7 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void ARogueCharacter::PlayStun()
 {
 	IsSturn = true;
+	EndAni();
 	if (StunMontage)
 	{
 		PlayAnimMontage(StunMontage);

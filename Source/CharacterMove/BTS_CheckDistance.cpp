@@ -22,7 +22,6 @@ void UBTS_CheckDistance::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	float Dis = FVector::Distance(OwnerPawn->GetActorLocation(), PlayerPawn->GetActorLocation());
 	float CurrentCoolTime = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(GetSelectedBlackboardKey());
 	CurrentCoolTime -= DeltaSeconds;
-	UE_LOG(LogTemp, Log, TEXT("%f"), CurrentCoolTime);
 	if (CurrentCoolTime <= 0)
 	{
 		CurrentCoolTime = 0;
