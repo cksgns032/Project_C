@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "RogueCharacter.h"
 #include "GameHUD.h"
+#include "RunGameMode.h"
 
 #include "CheckPoint.h"
 
@@ -44,15 +45,21 @@ void ACheckPoint::OnBegine_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("Check Point"));
 	ARogueCharacter* MainChar = Cast<ARogueCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	
-	if (MainChar == nullptr) return;
+	if (MainChar == nullptr || MainChar->HasKey() == false) return;
+	ARunGameMode* GameMode = Cast<ARunGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->AddKey();
+	}
+	MainChar->SetKey(false);
 
-	MainChar->UpdateCheckPoint(GetActorLocation());
+	/*MainChar->UpdateCheckPoint(GetActorLocation());
 	BoxCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	APlayerController* PC = Cast<APlayerController>(MainChar->GetController());
 	if (PC == nullptr) return;
 
-	AGameHUD* Hud = Cast<AGameHUD>(PC->GetHUD());
+	AGameHUD* Hud = Cast<AGameHUD>(PC->GetHUD());*/
 
 	//Hud->HUDWidget
 

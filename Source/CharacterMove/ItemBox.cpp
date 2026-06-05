@@ -2,9 +2,11 @@
 
 
 #include "ItemBox.h"
+#include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMaterialLibrary.h"
 
 
 // Sets default values
@@ -12,6 +14,9 @@ AItemBox::AItemBox()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
+	RootComponent = BoxCollision;
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
@@ -46,6 +51,11 @@ void AItemBox::OnTrigger_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("BOX Trigger"));
 	ChargePercent += UGameplayStatics::GetWorldDeltaSeconds(GetWorld())*3;
+
+	if (ChargePercent >= 1)
+	{
+		FullCharge();
+	}
 }
 
 void AItemBox::OnEnd_Implementation() {

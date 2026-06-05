@@ -66,6 +66,7 @@ protected:
 	UAnimMontage* StunMontage;
 	UFUNCTION(BlueprintCallable)
 	void PlayStun();
+
 	// 점프
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Anim/Jump")
 	int CurrentJumpCount;
@@ -112,6 +113,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Anim/Hit")
 	bool IsAirbon;
 
+	// 키 관련
+	bool IsHasKey;
 
 public:
 	void Move(const FInputActionValue& Value);
@@ -127,13 +130,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndAni();
 
+	bool HasKey();
+	void SetKey(bool Value);
+
 public:
 	void UpdateCheckPoint(FVector PointLocation);
 	FVector SpawnLocation;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Search")
-	USearchComponent* SearchCom;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Search")
+	TObjectPtr<USearchComponent> SearchCom;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Parkour")
 	UParkourComponent* ParkourCom;
 };

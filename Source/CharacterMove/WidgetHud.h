@@ -19,14 +19,17 @@ class CHARACTERMOVE_API UWidgetHud : public UUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Timer_Text;
-	
-public:
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Key_Text;
+
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Slide_Progress;
 
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Hook_Progress;
-
+	
+public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateSlideProgress(float Percent);
 
@@ -37,6 +40,7 @@ public:
 	void ResetAllProgress();
 
 	void UpdateTimer(float Time);
+	void UpdateKey(int CurKey, int MaxKey);
 
 protected:
 	virtual void NativeConstruct() override;

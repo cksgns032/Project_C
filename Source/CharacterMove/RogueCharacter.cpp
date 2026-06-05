@@ -13,6 +13,7 @@
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "CableComponent.h"
+#include "SearchableInterface.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -57,6 +58,9 @@ void ARogueCharacter::BeginPlay()
 	IsJumpAni = false;
 	IsSlide = false;
 	CanSlide = true;
+
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay SearchCom : %s"),
+		SearchCom ? TEXT("유효") : TEXT("null"));
 }
 
 // Called every frame
@@ -105,6 +109,7 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARogueCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ARogueCharacter::Jump);
 		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Triggered, this, &ARogueCharacter::Slide);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &ARogueCharacter::Interaction);
 	}
 }
 
@@ -207,6 +212,7 @@ void ARogueCharacter::Jump(const FInputActionValue& Value)
 void ARogueCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
+	UE_LOG(LogTemp, Log, TEXT("Land"));
 
 	// 착지 시 초기화
  	CurrentJumpCount = 0;
@@ -260,11 +266,12 @@ void ARogueCharacter::Slide(const FInputActionValue& Value)
 
 void ARogueCharacter::Interaction(const FInputActionValue& Value)
 {
-	if (SearchCom->ItemInterface == nullptr)
-	{
-		return;
-	}
-	//SearchCom->ItemInterface
+	if (!SearchCom) return;
+
+	UObject* InterfaceObj = SearchCom->ItemInterface.GetObject();
+	if (!InterfaceObj) return;
+
+	ISearchableInterface::Execute_OnTrigger(InterfaceObj);
 }
 
 void ARogueCharacter::EndHook()
@@ -278,6 +285,7 @@ void ARogueCharacter::EndHook()
 		CurRopeCoolTime = RopeCoolTime;
 	}
 }
+
 
 float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -358,5 +366,15 @@ void ARogueCharacter::EndAni()
 	// 안전한 위치로 이동 후 종료
 	SetActorLocation(SafeLocation);
 
+}
+
+bool ARogueCharacter::HasKey()
+{
+	return IsHasKey;
+}
+
+void ARogueCharacter::SetKey(bool Value)
+{
+	IsHasKey = Value;
 }
 

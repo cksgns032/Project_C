@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "SearchableInterface.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ItemBox.generated.h"
@@ -9,24 +11,24 @@
 class UStaticMeshComponent;
 class UWidgetComponent;
 
-enum EInteractionType {
-	Press,
-	Trigger,
-};
-
 UCLASS()
 class CHARACTERMOVE_API AItemBox : public AActor , public ISearchableInterface
 {
 	GENERATED_BODY()
 
 protected:
-	EInteractionType Type = EInteractionType::Trigger;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UBoxComponent* BoxCollision;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget");
 	TObjectPtr <UWidgetComponent> InteractionWidget;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ChargePercent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> RewardActor;
 	

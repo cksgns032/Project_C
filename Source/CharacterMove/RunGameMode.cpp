@@ -21,6 +21,18 @@ void ARunGameMode::StartPlay()
 {
     Super::StartPlay();
 
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    GameHud = Cast<AGameHUD>(PC->GetHUD());
+
+    // 변수 초기화
+    EnemyCnt = 0;
+    CurKey = 0;
+
+    UpdateKeyScore();
+
+    return;
+
+    // 상자 위치 확보
     TArray<AActor*> SpawnPoints;
     UGameplayStatics::GetAllActorsOfClass(
         GetWorld(),
@@ -32,8 +44,6 @@ void ARunGameMode::StartPlay()
     {
         SpawnLocations.Add(Point->GetActorLocation());
     }
-
-    EnemyCnt = 0;
 
     this->SetPlayerInput(false);
     CurrentState = EGameState::Waiting;
@@ -95,6 +105,21 @@ void ARunGameMode::SetPlayerInput(bool value)
                 ->DisableMovement();
         }
     }
+}
+
+void ARunGameMode::AddKey()
+{
+    CurKey = FMath::Min(CurKey + 1, MaxKey);
+    UpdateKeyScore();
+    if (CurKey == MaxKey)
+    {
+        GameOver();
+    }
+}
+
+void ARunGameMode::UpdateKeyScore()
+{
+    GameHud->HUDWidget->UpdateKey(CurKey, MaxKey);
 }
 
 void ARunGameMode::SpawnEnemy()
@@ -163,11 +188,9 @@ void ARunGameMode::GamePlay()
             if (!IsValid(this)) return;
 
             GameTime -= 1.0f;
-            APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-            AGameHUD* Hud = Cast<AGameHUD>(PC->GetHUD());
-            if (Hud)
+            if (GameHud)
             {
-                Hud->HUDWidget->UpdateTimer(GameTime);
+                GameHud->HUDWidget->UpdateTimer(GameTime);
                 if (GameTime <= 0.0f)
                 {
                     GameTime = 0.0f;
@@ -184,4 +207,5 @@ void ARunGameMode::GamePlay()
 
 void ARunGameMode::GameOver()
 {
+    UE_LOG(LogTemp, Log, TEXT("Game Over"));
 }

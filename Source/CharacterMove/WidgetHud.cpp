@@ -40,6 +40,14 @@ void UWidgetHud::UpdateTimer(float Time)
 	}
 }
 
+void UWidgetHud::UpdateKey(int CurKey, int MaxKey)
+{
+	if (Key_Text)
+	{
+		Key_Text->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), CurKey, MaxKey)));
+	}
+}
+
 void UWidgetHud::NativeConstruct()
 {
 	Super::NativeConstruct();
