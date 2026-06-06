@@ -17,4 +17,18 @@ void AGameHUD::BeginPlay()
 
     if (HUDWidget)
         HUDWidget->AddToViewport();
+
+    GameStateWidget = CreateWidget<UWidget_GameState>(PC, GameStateWidgetClass);
+
+    if (GameStateWidget)
+        GameStateWidget->AddToViewport();
+}
+
+void AGameHUD::ShowGameState()
+{
+    if (GameStateWidget)
+    {
+        GameStateWidget->AddToViewport();
+        GameStateWidget->ShowGameStateText();
+    }
 }

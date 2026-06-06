@@ -10,6 +10,7 @@
 
 class UStaticMeshComponent;
 class UWidgetComponent;
+class UBoxComponent;
 
 UCLASS()
 class CHARACTERMOVE_API AItemBox : public AActor , public ISearchableInterface

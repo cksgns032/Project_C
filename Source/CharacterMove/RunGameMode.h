@@ -67,6 +67,7 @@ protected:
 public:
     UFUNCTION(BlueprintCallable, Category = "Game")
     void SetPlayerInput(bool value);
+    EGameState GetState() { return CurrentState; }
     void AddKey();
     void UpdateKeyScore();
     void SpawnEnemy();

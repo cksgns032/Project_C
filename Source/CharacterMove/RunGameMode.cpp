@@ -30,7 +30,10 @@ void ARunGameMode::StartPlay()
 
     UpdateKeyScore();
 
-    return;
+    CurrentState = EGameState::Waiting;
+    GameHud->ShowGameState();
+
+    //return;
 
     // 상자 위치 확보
     TArray<AActor*> SpawnPoints;
@@ -46,7 +49,10 @@ void ARunGameMode::StartPlay()
     }
 
     this->SetPlayerInput(false);
-    CurrentState = EGameState::Waiting;
+
+    GameTime = 90.0f;
+
+    GameHud->HUDWidget->UpdateTimer(GameTime);
     
     GetWorld()->GetTimerManager().SetTimer(StartHandle, [this]() {
         UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
@@ -64,8 +70,9 @@ void ARunGameMode::StartPlay()
         );
         
         CurrentState = EGameState::Playing;
+        GameHud->GameStateWidget->RemoveFromParent();
         UE_LOG(LogTemp, Log, TEXT("Start"));
-        },10,false);
+        },3,false);
 }
 
 void ARunGameMode::PostLogin(APlayerController* PC)
@@ -113,6 +120,7 @@ void ARunGameMode::AddKey()
     UpdateKeyScore();
     if (CurKey == MaxKey)
     {
+        CurrentState = EGameState::Clear;
         GameOver();
     }
 }
@@ -178,8 +186,6 @@ void ARunGameMode::SpawnActors()
 
 void ARunGameMode::GamePlay()
 {
-    GameTime = 600.0f;
-
     // 1초마다 감소
     GetWorld()->GetTimerManager().SetTimer(
         GameTimerHandle,
@@ -196,6 +202,7 @@ void ARunGameMode::GamePlay()
                     GameTime = 0.0f;
                     GetWorld()->GetTimerManager()
                         .ClearTimer(GameTimerHandle);
+                    CurrentState = EGameState::GameOver;
                     GameOver(); // 시간 종료
                 }
             }
@@ -206,6 +213,10 @@ void ARunGameMode::GamePlay()
 }
 
 void ARunGameMode::GameOver()
-{
+{   
+    SetPlayerInput(false);
+    GetWorld()->GetTimerManager()
+        .ClearTimer(GameTimerHandle);
+    GameHud->ShowGameState();
     UE_LOG(LogTemp, Log, TEXT("Game Over"));
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "WidgetHud.h"
+#include "Widget_GameState.h"
 #include "GameHUD.generated.h"
 
 /**
@@ -22,7 +23,16 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "UI")
     TObjectPtr<UWidgetHud> HUDWidget;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UWidget_GameState> GameStateWidgetClass;
+
+    UPROPERTY(BlueprintReadOnly, Category = "UI")
+    TObjectPtr<UWidget_GameState> GameStateWidget;
+
 protected:
     virtual void BeginPlay() override;
+
+public:
+    void ShowGameState();
 	
 };
