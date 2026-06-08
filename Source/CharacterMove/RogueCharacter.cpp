@@ -291,6 +291,9 @@ float ARogueCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 {
 	UE_LOG(LogTemp, Log, TEXT("Hit"));
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+
 	if (IsSlide)
 	{
 		EndAni();

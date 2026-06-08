@@ -20,8 +20,6 @@ AItemKey::AItemKey()
 void AItemKey::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Collision->OnComponentBeginOverlap.AddDynamic(this, &AItemKey::OnBegin);
 	
 }
 
@@ -29,15 +27,6 @@ void AItemKey::BeginPlay()
 void AItemKey::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-}
-
-void AItemKey::OnBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (Cast<ARogueCharacter>(OtherActor))
-	{
-		
-	}
 }
 
 void AItemKey::OnBegine_Implementation()

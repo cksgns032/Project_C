@@ -58,8 +58,8 @@ void ARunGameMode::StartPlay()
         UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
         SetPlayerInput(true);
         
-        SpawnEnemy();
-        GamePlay();
+        //SpawnEnemy();
+        //GamePlay();
 
         GetWorld()->GetTimerManager().SetTimer(
             SpawnTimer,
